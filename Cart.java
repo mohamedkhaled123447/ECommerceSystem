@@ -6,6 +6,10 @@ public class Cart {
     private List<CartItem> items = new ArrayList<>();
 
     public void addItem(Product product, int quantity) {
+        if (quantity == 0) {
+            System.out.println("Can not add 0 quantity");
+            return;
+        }
         if (product.getQuantity() < quantity) {
             System.out.println("Not enough stock for: " + product.getName());
             return;
