@@ -14,7 +14,7 @@ public class Visa implements PaymentStrategy {
             return;
         }
 
-        List<CartItem> shippableItems = new ArrayList<>();
+        List<ShippingItem> shippingItems = new ArrayList<>();
         List<CartItem> filteredItems = new ArrayList<>();
         double subtotal = 0;
         double shippingFees = 0;
@@ -45,7 +45,7 @@ public class Visa implements PaymentStrategy {
             if (product instanceof Shippable) {
                 Shippable shippable = (Shippable) product;
                 shippingFees += shippable.getWeight() * SHIPPING_RATE * quantity;
-                shippableItems.add(item);
+                shippingItems.add(new ShippingItem(shippable.getWeight(),shippable.getName()));
             }
             filteredItems.add(item);
         }
@@ -60,10 +60,18 @@ public class Visa implements PaymentStrategy {
         }
 
         customer.setBalance(customer.getBalance() - total);
+        double totalWeight = 0;
 
-
-        shippingService.ship(shippableItems);
-
+        System.out.println("\n** Shipment notice **");
+        for (CartItem item : filteredItems) {
+            if (item.getProduct() instanceof Shippable) {
+                Shippable shippable = (Shippable) item.getProduct();
+                System.out.printf("%dx %s          %.2f kg\n", item.getQuantity(),
+                        item.getProduct().getName(), shippable.getWeight() * item.getQuantity());
+                totalWeight += shippable.getWeight() * item.getQuantity();
+            }
+        }
+        System.out.printf("Total package weight %.2f kg\n",totalWeight);
         System.out.println("\n** Checkout receipt **");
         for (CartItem item : filteredItems) {
             System.out.printf("%dx %s          %.2f\n", item.getQuantity(),
@@ -73,5 +81,6 @@ public class Visa implements PaymentStrategy {
         System.out.printf("Subtotal          $%.2f%n", subtotal);
         System.out.printf("Shipping          $%.2f%n", shippingFees);
         System.out.printf("Amount            $%.2f%n", total);
+        shippingService.ship(shippingItems);
     }
 }

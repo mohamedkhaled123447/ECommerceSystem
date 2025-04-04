@@ -1,5 +1,5 @@
 import java.util.List;
 
 public interface ShippingStrategy {
-    void ship(List<CartItem> items);
+    void ship(List<ShippingItem> items);
 }

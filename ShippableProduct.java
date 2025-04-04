@@ -6,6 +6,7 @@ public class ShippableProduct extends Product implements Shippable {
         this.weight = weight;
     }
 
+
     @Override
     public double getWeight() {
         return weight;
